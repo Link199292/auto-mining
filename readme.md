@@ -31,7 +31,7 @@ To avoid issues with this feature I suggest you to stick to the following struct
     - \lolMiner_v1.28a_Win64
         - \eth_mine.bat
 
-**Please remember to manually insert your custom wallet**
+**Please remember to manually insert your custom wallet** within the bat file
 
 ## requirements.txt
 
