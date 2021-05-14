@@ -1,5 +1,5 @@
 # **auto-miner**
-***
+
 auto-miner is a python script which allows you to automate the process of ETH mining based on the current gas value.
 
 ## config.txt
