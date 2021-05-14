@@ -152,7 +152,7 @@ if gas > threshold:
 
 while True:
     if not started:
-        for i in tqdm(range(inactive_wait[1]), desc = 'Time to check gas value'):
+        for i in tqdm(range(inactive_wait[1]), desc = 'Next gas value check', ascii = True):
             time.sleep(inactive_wait[0])
         gas = get_value()
         if gas >= threshold:
@@ -164,7 +164,7 @@ while True:
                 w.write(f'{current} - miner STARTED - gas value: {gas}\n')
             started = True
     else:
-        for j in tqdm(range(active_wait[1]), desc = 'Time to check gas value'):
+        for j in tqdm(range(active_wait[1]), desc = 'Next gas value check', ascii = True):
             time.sleep(active_wait[0])
         gas = get_value()
         if gas < threshold:
