@@ -1,3 +1,4 @@
+from tkinter import Tk
 from tkinter.filedialog import askdirectory
 from bs4 import BeautifulSoup
 import requests
@@ -30,6 +31,8 @@ def get_main_directory():
             position = True
             folder = line
     if not position:
+        r = Tk()
+        r.withdraw()
         folder = askdirectory(title = "Select miner's folder")
         with open('directory.txt', 'w', encoding = 'utf-8') as w:
             w.write(folder)
