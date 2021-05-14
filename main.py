@@ -1,3 +1,4 @@
+from tkinter import Tk
 from tkinter.filedialog import askdirectory
 from bs4 import BeautifulSoup
 import requests
@@ -30,11 +31,13 @@ def get_main_directory():
             position = True
             folder = line
     if not position:
+        r = Tk()
+        r.withdraw()
         folder = askdirectory(title = "Select miner's folder")
         with open('directory.txt', 'w', encoding = 'utf-8') as w:
             w.write(folder)
     return folder
-
+    
 def current_version():
     """return current most recent folder and current most
        recent version of the miner
@@ -75,18 +78,18 @@ def read_config():
     return diz
 
 def start_miner():
+    curr = current_version()[0]
     with open('directory.txt', encoding = 'utf-8') as r:
         path = r.readline()
-    dirs = os.listdir(path)
-    folder_to_open = current_version()[0]
-    for d in dirs:
-        if folder_to_open in d:
-            folder_to_open = d
-    last = os.listdir(os.path.join(path, folder_to_open))[0]
-    res = os.path.join(path, folder_to_open, last).replace('/', '\\')
+    for root, dirs, files in os.walk(path, topdown=False):
+        for name in files:
+            if curr in root:
+                res = os.path.join(root).replace('/', '\\')
+                break
+    save = os.getcwd()
     os.chdir(res)
-    # os.system('mine_eth.bat')
     os.system('start cmd /k mine_eth.bat')
+    os.chdir(save)
 
 def stop_miner():
     command = 'taskkill /im lolMiner.exe /t /f'
@@ -104,8 +107,8 @@ print(diz)
 
 #get threshold gas value
 threshold = diz['fuel_threshold']
-active_wait = (int(diz['wait_time_active'] / 100), 100)
-inactive_wait = (int(diz['wait_time_inactive'] / 100), 100)
+active_wait = (diz['wait_time_active'] / 10, 10)
+inactive_wait = (diz['wait_time_inactive'] / 10, 10)
 
 #get main dir of miner
 first_dir_layer = get_main_directory()
@@ -149,7 +152,7 @@ if gas > threshold:
 
 while True:
     if not started:
-        for i in tqdm(range(inactive_wait[1]), desc = 'Time to check gas value'):
+        for i in tqdm(range(inactive_wait[1]), desc = 'Time to check gas value', ascii = True):
             time.sleep(inactive_wait[0])
         gas = get_value()
         if gas >= threshold:
@@ -161,7 +164,7 @@ while True:
                 w.write(f'{current} - miner STARTED - gas value: {gas}\n')
             started = True
     else:
-        for j in tqdm(range(active_wait[1]), desc = 'Time to check gas value'):
+        for j in tqdm(range(active_wait[1]), desc = 'Time to check gas value', ascii = True):
             time.sleep(active_wait[0])
         gas = get_value()
         if gas < threshold:

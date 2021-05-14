@@ -10,6 +10,6 @@
 #Do not change values BEFORE COLON#
 ###################################
 #
-{'fuel_threshold' : 145,
+{'fuel_threshold' : 180,
 'wait_time_active' : 3600,
-'wait_time_inactive' : 300}
+'wait_time_inactive' : 60}
