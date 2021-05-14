@@ -33,6 +33,6 @@ To avoid issues with this feature I suggest you to stick to the following struct
 
 **Please remember to manually insert your custom wallet**
 
-##requirements.txt
+## requirements.txt
 ***
 list of packages required (py -m pip install -r requirements.txt)
