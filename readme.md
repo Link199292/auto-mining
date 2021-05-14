@@ -1,6 +1,6 @@
 # **auto-miner**
 
-<div style="justify"> auto-miner is a python script which allows you to automate the process of ETH mining based on the current gas value. </div>
+auto-miner is a python script which allows you to automate the process of ETH mining based on the current gas value. 
 
 ## config.txt
 
@@ -35,4 +35,4 @@ To avoid issues with this feature I suggest you to stick to the following struct
 
 ## requirements.txt
 
-<div style="justify"> list of packages required (py -m pip install -r requirements.txt) </div>
+list of packages required (py -m pip install -r requirements.txt)
