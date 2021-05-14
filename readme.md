@@ -13,7 +13,7 @@ In this file you are going to find a python dictionary which contains 3 keys:
 
 ## logs.txt
 
-A log file which takes note of the main events while the script is in execution.
+A log file which takes note of the main events while the script is in execution is going to be created.
 Events which are recorded: 
 - a new update is available
 - the miner has started and the gas value at that moment
