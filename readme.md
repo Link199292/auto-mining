@@ -21,8 +21,8 @@ Events which are recorded:
 
 ## directory.txt
 
-At beginning this is just an empty txt file. You could manually insert the main directory of lolminer (as plain text, e.g. C:\Users\username\miner), or just start the script and let it ask you for the desired directory (it will ask only if the first line of config.txt is empty).
-This script is provided with an auto-check of the latest version available (it means that you are going to be warned you in the terminal and in the logs.txt file if your version differs to the latest available).
+At beginning this is just an empty txt file. You could manually insert the main directory as plain text (e.g. C:\Users\username\miner), or just start the script and let it ask for the desired directory (this is going to write and read from the first line of config.txt).
+This script is provided with an auto-check of the latest version available (it means that you are going to be warned in the terminal and in the logs.txt file if your version differs to the latest available).
 To avoid issues with this feature I suggest you to stick to the following structure:
 
 - \Miner
