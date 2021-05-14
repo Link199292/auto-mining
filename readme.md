@@ -4,8 +4,8 @@
 
 ## config.txt
 
-<div style="justify"> The script is compatible with **lolminer**, and run properly on **Windows** only.
-In this file you are going to find a python dictionary which contains 3 keys: </div>
+The script is compatible with **lolminer**, and run properly on **Windows** only.
+In this file you are going to find a python dictionary which contains 3 keys:
 
 - **'fuel_threshold'**, it accepts an integer value which defines the threshold after/below which the miner starts/stops.
 - **'wait_time_inactive'**, it accepts a numerical value (better if integer), which defines how much time the script should wait for each gas value check, when miner is OFF
@@ -13,17 +13,17 @@ In this file you are going to find a python dictionary which contains 3 keys: </
 
 ## logs.txt
 
-<div style="justify"> A log file which takes note of the main events while the script is in execution.
-Events which are recorded: </div>
+A log file which takes note of the main events while the script is in execution.
+Events which are recorded: 
 - a new update is available
 - the miner has started and the gas value at that moment
 - the miner has stopped and the gas value at that moment
 
 ## directory.txt
 
-<div style="justify"> At beginning this is just an empty txt file. You could manually insert the main directory of lolminer (as plain text, e.g. C:\Users\username\miner), or just start the script and let it ask you for the desired directory (it will ask only if the first line of config.txt is empty).
+At beginning this is just an empty txt file. You could manually insert the main directory of lolminer (as plain text, e.g. C:\Users\username\miner), or just start the script and let it ask you for the desired directory (it will ask only if the first line of config.txt is empty).
 This script is provided with an auto-check of the latest version available (it means that you are going to be warned you in the terminal and in the logs.txt file if your version differs to the latest available).
-To avoid issues with this feature I suggest you to stick to the following structure: </div>
+To avoid issues with this feature I suggest you to stick to the following structure:
 
 - \Miner
     - \lolMiner_v1.20_Win64
