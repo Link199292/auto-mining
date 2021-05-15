@@ -12,9 +12,27 @@ from pprint import pprint
 def get_value(oracle, api):
     api = api
     url = f'https://api.etherscan.io/api?module=gastracker&action=gasoracle&apikey={api}'
-    x = requests.get(url)
-    x = eval(x.text)['result']
-    del x['LastBlock']
+    try:
+        x = requests.get(url)
+        x = eval(x.text)
+        x = x['result']
+    except:
+        print('could not retrieve information about gas value')
+        rep = 0
+        while rep <= 100:
+            print('trying to reconnect: {rep}/100 attempts', end = 'r', flush = True)
+            x = requests.get(url)
+            x = eval(x.text)
+            if 'result' in x:
+                x = x['result']
+                break
+            rep += 1
+            time.sleep(5)
+        x = datetime.datetime.now()
+        current = x.strftime('%D - %H:%M:%S')
+        with open('logs.txt', 'a', encoding = 'utf-8') as w:
+            w.write(f'{current} - miner STOPPED because it was not possible to retrieve any gas value information')
+        raise ValueError('Connection Error: It was not possible to retrieve informations about gas value.\nPlease restart the script.')
     return int(x[oracle])
 
 def get_file_directory():
@@ -125,8 +143,8 @@ pprint(diz)
 print('')
 
 start_gas, stop_gas = diz['start_gas_threshold'], diz['stop_gas_threshold']
-active_wait = (diz['wait_time_active'] / 10, 10)
-inactive_wait = (diz['wait_time_inactive'] / 10, 10)
+active_wait = (diz['wait_time_active'], 1)
+inactive_wait = (diz['wait_time_inactive'], 1)
 api = diz['API']
 oracle = diz['gas_oracle']
 
@@ -164,8 +182,8 @@ if gas > start_gas:
 
 while True:
     if not started:
-        for i in tqdm(range(inactive_wait[1]), desc = 'Waiting to check gas value', ascii = True):
-            time.sleep(inactive_wait[0])
+        for i in tqdm(range(inactive_wait[0]), desc = 'Waiting to check gas value', ascii = True):
+            time.sleep(inactive_wait[1])
         gas = get_value(oracle, api)
         if gas >= start_gas:
             start_miner()
@@ -175,9 +193,11 @@ while True:
             with open('logs.txt', 'a', encoding = 'utf-8') as w:
                 w.write(f'{current} - miner STARTED - gas value: {gas}\n')
             started = True
+        else:
+            print(f'found {gas}, expected {start_gas} to start\n')
     else:
-        for j in tqdm(range(active_wait[1]), desc = 'Time to check gas value', ascii = True):
-            time.sleep(active_wait[0])
+        for j in tqdm(range(active_wait[0]), desc = 'Time to check gas value', ascii = True):
+            time.sleep(active_wait[1])
         gas = get_value(oracle, api)
         if gas <= stop_gas:
             stop_miner(process_name)
@@ -187,3 +207,5 @@ while True:
             with open('logs.txt', 'a', encoding = 'utf-8') as w:
                 w.write(f'{current} - miner STOPPED - gas value: {gas}\n')
             started = False
+        else:
+            print('found {gas}, expected {stop_gas} to stop\n')
