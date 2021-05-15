@@ -115,7 +115,6 @@ def start_miner():
 def stop_miner(process_name):
     command = f'taskkill /im {process_name} /t /f'
     string = subprocess.getoutput(command)
-    print(string)
     string = string.split('(')[-1]
     string = ''.join([i for i in string if i.isnumeric()])
     os.system(f'taskkill /pid {string} /t /f')

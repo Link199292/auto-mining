@@ -10,7 +10,7 @@
 #Do not change values BEFORE COLON#
 ###################################
 #
-{'start_gas_threshold' : 180,
-'stop_gas_threshold' : 100,
-'wait_time_active' : 3600,
+{'start_gas_threshold' : 100,
+'stop_gas_threshold' : 90,
+'wait_time_active' : 60,
 'wait_time_inactive' : 60}
