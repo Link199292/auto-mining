@@ -11,6 +11,6 @@
 ###################################
 #
 {'start_gas_threshold' : 180,
-'stop_gas_threshold', : 100,
+'stop_gas_threshold' : 100,
 'wait_time_active' : 3600,
 'wait_time_inactive' : 60}
