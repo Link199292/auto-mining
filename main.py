@@ -9,16 +9,13 @@ import datetime
 from tqdm import tqdm
 from pprint import pprint
 
-def get_value():
-    """Get current gas value and return it as int
-    """
-    url = 'https://ethgasstation.info/index.php'
-    page = requests.get(url)
-    soup = BeautifulSoup(page.content, 'html.parser')
-    divs = soup.find_all('div', {'class' : 'count standard'})
-
-    value = [i.text.strip() for i in divs][0]
-    return int(value)
+def get_value(oracle, api):
+    api = api
+    url = f'https://api.etherscan.io/api?module=gastracker&action=gasoracle&apikey={api}'
+    x = requests.get(url)
+    x = eval(x.text)['result']
+    del x['LastBlock']
+    return int(x[oracle])
 
 def get_file_directory():
     '''get miner's bat dir or ask for one if not in directory.txt
@@ -130,6 +127,9 @@ print('')
 start_gas, stop_gas = diz['start_gas_threshold'], diz['stop_gas_threshold']
 active_wait = (diz['wait_time_active'] / 10, 10)
 inactive_wait = (diz['wait_time_inactive'] / 10, 10)
+api = diz['API']
+oracle = diz['gas_oracle']
+
 
 miner = which_miner()
 
@@ -152,7 +152,7 @@ else:
 
 started = False
 
-gas = get_value()
+gas = get_value(oracle, api)
 if gas > start_gas:
     start_miner()
     print(f'miner STARTED - gas value: {start_gas}')
@@ -166,7 +166,7 @@ while True:
     if not started:
         for i in tqdm(range(inactive_wait[1]), desc = 'Waiting to check gas value', ascii = True):
             time.sleep(inactive_wait[0])
-        gas = get_value()
+        gas = get_value(oracle, api)
         if gas >= start_gas:
             start_miner()
             print(f'miner STARTED with the following gas value: {gas}')
@@ -178,7 +178,7 @@ while True:
     else:
         for j in tqdm(range(active_wait[1]), desc = 'Time to check gas value', ascii = True):
             time.sleep(active_wait[0])
-        gas = get_value()
+        gas = get_value(oracle, api)
         if gas <= stop_gas:
             stop_miner(process_name)
             print(f'MINER STOPPED with the following gas value: {gas}')

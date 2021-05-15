@@ -13,4 +13,6 @@
 {'start_gas_threshold' : 100,
 'stop_gas_threshold' : 90,
 'wait_time_active' : 60,
-'wait_time_inactive' : 60}
+'wait_time_inactive' : 60,
+'API' : 'YourApiKeyToken',
+'gas_oracle' : 'SafeGasPrice'}
