@@ -36,8 +36,8 @@ lolminer:
 
 t-rex:
 - \Miner
-    -\t-rex-0.20.3-win
-        -\ETH-ethermine.bat
+    - \t-rex-0.20.3-win
+        - \ETH-ethermine.bat
 
 **Please remember to manually insert your custom wallet** within the bat file
 
