@@ -1,13 +1,13 @@
 from tkinter import Tk
-from tkinter.filedialog import askdirectory
+from tkinter.filedialog import askopenfilename
 from bs4 import BeautifulSoup
 import requests
 import os
-import ast
 import time
 import subprocess
 import datetime
 from tqdm import tqdm
+from pprint import pprint
 
 def get_value():
     """Get current gas value and return it as int
@@ -20,8 +20,8 @@ def get_value():
     value = [i.text.strip() for i in divs][0]
     return int(value)
 
-def get_main_directory():
-    '''get miner's dir or ask for one if not in directory.txt
+def get_file_directory():
+    '''get miner's bat dir or ask for one if not in directory.txt
        then return it
     '''
     position = False
@@ -33,129 +33,142 @@ def get_main_directory():
     if not position:
         r = Tk()
         r.withdraw()
-        folder = askdirectory(title = "Select miner's folder")
+        folder = askopenfilename(title = "Select the miner's bat file")
         with open('directory.txt', 'w', encoding = 'utf-8') as w:
             w.write(folder)
     return folder
-    
-def current_version():
-    """return current most recent folder and current most
-       recent version of the miner
-    """
-    with open('directory.txt', encoding = 'utf-8') as r:
-        path = r.readline()
-        possible_versions = os.listdir(path)
 
-    new = []
-    for possible in possible_versions:
-        folder_name = possible
-        version_name = folder_name.split('_')[1].replace('v', '')
-        version_name = ''.join([i for i in version_name if not i.isalpha()])
-        new.append((folder_name, version_name))
-    folder, version = sorted(new, key = lambda x : x[0])[-1]
-    return folder, version
-
-def available_version():
-    """return current available version of miner from Github
+def which_miner():
+    """return a bool:
+       True : lolminer
+       False : trex
     """
-    url = 'https://github.com/Lolliedieb/lolMiner-releases/tags'
+    path = get_file_directory()
+    name = path.split('/')[-1]
+    if name == 'mine_eth.bat':
+        return True
+    elif name == 'ETH-ethermine.bat':
+        return False
+    else:
+        raise ValueError(f'your bat file {name} is not supported')
+
+def available_version_lolminer():
+    """return current available version of lolminer from Github
+    """
+    url = 'https://github.com/Lolliedieb/lolMiner-releases/releases'
     page = requests.get(url)
     soup = BeautifulSoup(page.content, 'html.parser')
     links = soup.find_all('a', href = True)
     for link in links:
         if link['href'].startswith('/Lolliedieb/lolMiner-releases/releases/tag/'):
             available = link['href']
-            break
+            break #break at the first link which satisfies the conditions (this must be the latest)
     available = available.split('/')[-1]
     return available
+
+def available_version_trex():
+    """return current available version of trex from their website
+    """
+    url = 'https://trex-miner.com/'
+    page = requests.get(url)
+    soup = BeautifulSoup(page. content, 'html.parser')
+    divs = soup.find_all('div', {'class' : 'dwn-item__name d-inline-flex'})
+    available = [i.text.strip() for i in divs][0]
+    available = available.split()
+    return available[-1]
+
+def current_version():
+    """return current most recent folder and current most
+       recent version of the miner
+    """
+    miner = which_miner()
+    with open('directory.txt', encoding = 'utf-8') as r:
+        current = r.readline()
+    if miner:
+        current = current.split('/')[-2] #take parent folder of the bat file
+        current = ''.join([i for i in current if not i.isalpha()]) #take version's value and exclude alpha
+        return current
+    else:
+        current = current.split('/')[-2] #take parent folder
+        current = current.split('-')[-2] #take version's value
+        return current
 
 def read_config():
     '''read config values, store it in diz and return it
     '''
     with open('config.txt', encoding = 'utf-8') as r:
         file = r.read()
-        diz = ast.literal_eval(file)
+        diz = eval(file)
     return diz
 
 def start_miner():
-    curr = current_version()[0]
+    curr = current_version()
     with open('directory.txt', encoding = 'utf-8') as r:
         path = r.readline()
-    for root, dirs, files in os.walk(path, topdown=False):
-        for name in files:
-            if curr in root:
-                res = os.path.join(root).replace('/', '\\')
-                break
+    pos = path.rfind('/')
+    folder, file = path[:pos + 1], path[pos + 1:]
     save = os.getcwd()
-    os.chdir(res)
-    os.system('start cmd /k mine_eth.bat')
+    os.chdir(folder)
+    os.system(f'start cmd /k {file}')
     os.chdir(save)
 
-def stop_miner():
-    command = 'taskkill /im lolMiner.exe /t /f'
-    string = subprocess.getoutput(command) #execute and get output
+def stop_miner(process_name):
+    command = f'taskkill /im {process_name} /t /f'
+    string = subprocess.getoutput(command)
+    print(string)
     string = string.split('(')[-1]
     string = ''.join([i for i in string if i.isnumeric()])
-    os.system(f'taskkill /pid {string} /f')
+    os.system(f'taskkill /pid {string} /t /f')
 
 ################################################################################
 
-#read config file
 diz = read_config()
 
-print(diz)
+print(f'Your current settings:\n')
+pprint(diz)
+print('')
 
-#get threshold gas value
-start_threshold, stop_threshold = diz['start_gas_threshold'], diz['stop_gas_threshold']
+start_gas, stop_gas = diz['start_gas_threshold'], diz['stop_gas_threshold']
 active_wait = (diz['wait_time_active'] / 10, 10)
 inactive_wait = (diz['wait_time_inactive'] / 10, 10)
 
-#get main dir of miner
-first_dir_layer = get_main_directory()
+miner = which_miner()
 
-#get dir which contains the versions and get the most updated version from folder
-second_dir_layer, current= current_version()
-
-available = available_version()
-
-#ask to update miner if a new update is available
-if current != available:
-    print('*WARNING* You should update your miner')
-    x = datetime.datetime.now()
-    current = x.strftime('%D - %H:%M:%S')
-    with open('logs.txt', 'a', encoding = 'utf-8') as w:
-        w.write(f'{current}, you should UPDATE your miner\n')
+if miner:
+    process_name = 'lolMiner.exe'
+    av = available_version_lolminer()
+    cr = current_version()
+    if cr != av:
+        print(f'*WARNING* You should update lolminer, {cr} >> {av}\n')
+    else:
+        print(f'lolminer is up to date {cr}\n')
 else:
-    print('Your miner is up to date')
-print(f'Waiting for an appropriate gas value >= {start_threshold}')
-
+    process_name = 't-rex.exe'
+    av = available_version_trex()
+    cr = current_version()
+    if av != cr:
+        print(f'*WARNING* You should update trex, {cr} >> {av}\n')
+    else:
+        print(f'trex is up to date {cr}\n')
 
 started = False
 
-#check gas value and start miner if gas value meets threshold value
 gas = get_value()
-if gas > start_threshold:
+if gas > start_gas:
     start_miner()
-    print(f'MINER STARTED with the following gas value: {start_threshold}')
+    print(f'miner STARTED - gas value: {start_gas}')
     x = datetime.datetime.now()
     current = x.strftime('%D - %H:%M:%S')
     with open('logs.txt', 'a', encoding = 'utf-8') as w:
-        w.write(f'{current} - miner STARTED - gas value: {gas}\n')
+        w.write(f'{current} - miner STARTED - gas value {start_gas}\n')
     started = True
-
-
-#Start miner or stop it depending on the threshold condition:
-#    -If miner is active, check each hour the gas value (if the threshold condition is met,
-#     shut the miner down).
-#    -If miner is inactive, check each five minutes if the gas value meets the threshold
-#     (and eventually turn the miner on).
 
 while True:
     if not started:
-        for i in tqdm(range(inactive_wait[1]), desc = 'Time to check gas value', ascii = True):
+        for i in tqdm(range(inactive_wait[1]), desc = 'Waiting to check gas value', ascii = True):
             time.sleep(inactive_wait[0])
         gas = get_value()
-        if gas >= start_threshold:
+        if gas >= start_gas:
             start_miner()
             print(f'miner STARTED with the following gas value: {gas}')
             x = datetime.datetime.now()
@@ -167,8 +180,8 @@ while True:
         for j in tqdm(range(active_wait[1]), desc = 'Time to check gas value', ascii = True):
             time.sleep(active_wait[0])
         gas = get_value()
-        if gas <= stop_threshold:
-            stop_miner()
+        if gas <= stop_gas:
+            stop_miner(process_name)
             print(f'MINER STOPPED with the following gas value: {gas}')
             x = datetime.datetime.now()
             current = x.strftime('%D - %H:%M:%S')

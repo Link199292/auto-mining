@@ -4,8 +4,8 @@ auto-miner is a python script which allows you to automate the process of ETH mi
 
 ## config.txt
 
-The script is compatible with **lolminer**, and run properly on **Windows** only.
-In this file you are going to find a python dictionary which contains 3 keys:
+The script is compatible with **lolminer** and **t-rex**. It run properly on **Windows** only.
+In this file you are going to find a python dictionary which contains 4 keys:
 
 - **'start_gas_threshold'**, it accepts an integer value which defines the threshold after which the miner starts.
 - **'stop_gas_threshold'**, it accepts an integer value which defines the threshold after which the miner stops.
@@ -22,18 +22,23 @@ Events which are recorded:
 
 ## directory.txt
 
-At beginning this is just an empty txt file. You could manually insert the main directory as plain text (e.g. C:\Users\username\miner), or just start the script and let it ask for the desired directory (this is going to write and read from the first line of config.txt).
+At beginning this is just an empty txt file. You could manually insert the position of the .bat file as plain text (e.g. C:\Users\username\miner\lolMiner_v1.28a_Win64\1.28a\mine_eth.bat), or just start the script and let it ask for the desired one (this is going to write and read from the first line of config.txt).
 This script is provided with an auto-check of the latest version available (it means that you are going to be warned in the terminal and in the logs.txt file if your version differs to the latest available).
 To avoid issues with this feature I suggest you to stick to the following structure:
 
+lolminer:
 - \Miner
-    - \lolMiner_v1.20_Win64
-        - \eth_mine.bat
     - \lolMiner_v1.28a_Win64
-        - \eth_mine.bat
+        - 1.28a
+            - \eth_mine.bat
+
+t-rex:
+- \Miner
+    -\t-rex-0.20.3-win
+        -\ETH-ethermine.bat
 
 **Please remember to manually insert your custom wallet** within the bat file
 
 ## requirements.txt
 
-list of packages required (py -m pip install -r requirements.txt)
+list of packages required
