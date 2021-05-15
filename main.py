@@ -106,7 +106,7 @@ diz = read_config()
 print(diz)
 
 #get threshold gas value
-threshold = diz['fuel_threshold']
+start_threshold, stop_threshold = diz['start_gas_threshold'], diz['stop_gas_threshold']
 active_wait = (diz['wait_time_active'] / 10, 10)
 inactive_wait = (diz['wait_time_inactive'] / 10, 10)
 
@@ -127,16 +127,16 @@ if current != available:
         w.write(f'{current}, you should UPDATE your miner\n')
 else:
     print('Your miner is up to date')
-print(f'Waiting for an appropriate gas value >= {threshold}')
+print(f'Waiting for an appropriate gas value >= {start_threshold}')
 
 
 started = False
 
 #check gas value and start miner if gas value meets threshold value
 gas = get_value()
-if gas > threshold:
+if gas > start_threshold:
     start_miner()
-    print(f'MINER STARTED with the following gas value: {gas}')
+    print(f'MINER STARTED with the following gas value: {start_threshold}')
     x = datetime.datetime.now()
     current = x.strftime('%D - %H:%M:%S')
     with open('logs.txt', 'a', encoding = 'utf-8') as w:
@@ -155,7 +155,7 @@ while True:
         for i in tqdm(range(inactive_wait[1]), desc = 'Time to check gas value', ascii = True):
             time.sleep(inactive_wait[0])
         gas = get_value()
-        if gas >= threshold:
+        if gas >= start_threshold:
             start_miner()
             print(f'miner STARTED with the following gas value: {gas}')
             x = datetime.datetime.now()
@@ -167,7 +167,7 @@ while True:
         for j in tqdm(range(active_wait[1]), desc = 'Time to check gas value', ascii = True):
             time.sleep(active_wait[0])
         gas = get_value()
-        if gas < threshold:
+        if gas <= stop_threshold:
             stop_miner()
             print(f'MINER STOPPED with the following gas value: {gas}')
             x = datetime.datetime.now()

@@ -7,7 +7,8 @@ auto-miner is a python script which allows you to automate the process of ETH mi
 The script is compatible with **lolminer**, and run properly on **Windows** only.
 In this file you are going to find a python dictionary which contains 3 keys:
 
-- **'fuel_threshold'**, it accepts an integer value which defines the threshold after/below which the miner starts/stops.
+- **'start_gas_threshold'**, it accepts an integer value which defines the threshold after which the miner starts.
+- **'stop_gas_threshold'**, it accepts an integer value which defines the threshold after which the miner stops.
 - **'wait_time_inactive'**, it accepts a numerical value (better if integer), which defines how much time the script should wait for each gas value check, when miner is OFF
 - **'wait_time_active'**, it accepts a numerical value (better if integer), which defines how much time the script should wait for each gas value check, when miner is ON
 

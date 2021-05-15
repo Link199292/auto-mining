@@ -1,0 +1,13 @@
+05/14/21 - 21:35:03 - miner STARTED - gas value: 189
+05/14/21 - 22:35:05 - miner STOPPED - gas value: 101
+05/14/21 - 23:31:14 - miner STARTED - gas value: 181
+05/15/21 - 00:31:16 - miner STOPPED - gas value: 161
+05/15/21 - 00:42:29 - miner STARTED - gas value: 190
+05/15/21 - 01:42:31 - miner STOPPED - gas value: 138
+05/15/21 - 01:43:32 - miner STARTED - gas value: 199
+05/15/21 - 02:43:33 - miner STOPPED - gas value: 150
+05/15/21 - 05:00:25 - miner STARTED - gas value: 185
+05/15/21 - 06:00:26 - miner STOPPED - gas value: 142
+05/15/21 - 06:10:38 - miner STARTED - gas value: 201
+05/15/21 - 07:10:40 - miner STOPPED - gas value: 98
+05/15/21 - 12:42:32 - miner STARTED - gas value: 289
