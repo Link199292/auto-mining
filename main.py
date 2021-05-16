@@ -24,13 +24,15 @@ def get_value(oracle, api):
             x = eval(x.text)
             if 'result' in x:
                 reconnect = True
+                x = x['result']
             count += 1
     else:
+        x = x['result']
         reconnect = True
-    
+
     if reconnect:
         return int(x[oracle])
-        
+
     x = datetime.datetime.now()
     current = x.strftime('%D - %H:%M:%S')
     with open('logs.txt', 'a', encoding = 'utf-8') as w:
