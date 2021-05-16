@@ -26,18 +26,15 @@ def get_value(oracle, api):
                 reconnect = True
                 x = x['result']
             count += 1
-    else:
-        x = x['result']
-        reconnect = True
-
-    if reconnect:
-        return int(x[oracle])
-
-    x = datetime.datetime.now()
-    current = x.strftime('%D - %H:%M:%S')
-    with open('logs.txt', 'a', encoding = 'utf-8') as w:
-        w.write(f'{current} - miner STOPPED because it was not possible to retrieve any gas value information')
-    raise ValueError('Connection Error: It was not possible to retrieve informations about gas value.\nPlease restart the script.')
+        if not reconnect:
+            x = datetime.datetime.now()
+            current = x.strftime('%D - %H:%M:%S')
+            with open('logs.txt', 'a', encoding = 'utf-8') as w:
+                w.write(f'{current} - miner STOPPED because it was not possible to retrieve any gas value information')
+    
+            raise ValueError('Connection Error: It was not possible to retrieve informations about gas value.\nPlease restart the script.')
+    x = x['result']
+    return int(x[oracle])
 
 def get_file_directory():
     '''get miner's bat dir or ask for one if not in directory.txt
