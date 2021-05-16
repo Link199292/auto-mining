@@ -25,6 +25,7 @@ def get_value(oracle, api):
             if 'result' in x:
                 reconnect = True
                 x = x['result']
+            time.sleep(5)
             count += 1
         if not reconnect:
             x = datetime.datetime.now()
