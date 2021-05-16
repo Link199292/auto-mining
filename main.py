@@ -140,7 +140,7 @@ def stop_miner(process_name):
 
 diz = read_config()
 
-print(f'Your current settings:\n')
+print('Your current settings:\n')
 pprint(diz)
 print('')
 
@@ -210,4 +210,4 @@ while True:
                 w.write(f'{current} - miner STOPPED - gas value: {gas}\n')
             started = False
         else:
-            print('found {gas}, expected {stop_gas} to stop\n')
+            print(f'found {gas}, expected {stop_gas} to stop\n')
