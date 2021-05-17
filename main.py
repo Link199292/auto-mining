@@ -10,32 +10,38 @@ from tqdm import tqdm
 from pprint import pprint
 
 def get_value(oracle, api):
+    reconnect = True
     api = api
     url = f'https://api.etherscan.io/api?module=gastracker&action=gasoracle&apikey={api}'
     x = requests.get(url)
-    x = eval(x.text)
-    if 'result' not in x:
+    try:
+        x = eval(x.text)
+    except:
+        reconnect = False
         print('could not retrieve information about gas value')
         count = 1
-        reconnect = False
-        while count < 101 and 'result' not in x:
-            print(f'trying to reconnect: {count}/100 attempts', end = 'r', flush = True)
+        while count < 101:
             x = requests.get(url)
-            x = eval(x.text)
-            if 'result' in x:
+            try:
+                x = eval(x.text)
                 reconnect = True
-                x = x['result']
-            time.sleep(5)
-            count += 1
-        if not reconnect:
-            x = datetime.datetime.now()
-            current = x.strftime('%D - %H:%M:%S')
-            with open('logs.txt', 'a', encoding = 'utf-8') as w:
-                w.write(f'{current} - miner STOPPED because it was not possible to retrieve any gas value information')
-    
+            except:
+                print(f'trying to reconnect: {count}/100 attempts', end = '\r', flush = True)
+                count += 1
+                time.sleep(3)
+            if reconnect:
+                print('\nreconnected!')
+                break
+    if not reconnect:
+        x = datetime.datetime.now()
+        current = x.strftime('%D - %H:%M:%S')
+        with open('logs.txt', 'a', encoding = 'utf-8') as w:
+            w.write(f'{current} - miner STOPPED because it was not possible to retrieve any gas value information')
             raise ValueError('Connection Error: It was not possible to retrieve informations about gas value.\nPlease restart the script.')
-    x = x['result']
-    return int(x[oracle])
+    else:
+        x = x['result']
+        return int(x[oracle])
+
 
 def get_file_directory():
     '''get miner's bat dir or ask for one if not in directory.txt
