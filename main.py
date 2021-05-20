@@ -26,6 +26,8 @@ def get_value(oracle, api):
                 x = eval(x.text)
                 reconnect = True
             except:
+                current = get_time()
+                print(current)
                 print(f'trying to reconnect: {count}/100 attempts', end = '\r', flush = True)
                 count += 1
                 time.sleep(3)
@@ -33,15 +35,13 @@ def get_value(oracle, api):
                 print('\nreconnected!')
                 break
     if not reconnect:
-        x = datetime.datetime.now()
-        current = x.strftime('%D - %H:%M:%S')
+        current = get_time()
         with open('logs.txt', 'a', encoding = 'utf-8') as w:
             w.write(f'{current} - miner STOPPED because it was not possible to retrieve any gas value information')
-            raise ValueError('Connection Error: It was not possible to retrieve informations about gas value.\nPlease restart the script.')
+            raise ValueError(f'{current} - Connection Error: It was not possible to retrieve informations about gas value.\nPlease restart the script.')
     else:
         x = x['result']
         return int(x[oracle])
-
 
 def get_file_directory():
     '''get miner's bat dir or ask for one if not in directory.txt
@@ -73,7 +73,7 @@ def which_miner():
     elif name == 'ETH-ethermine.bat':
         return False
     else:
-        raise ValueError(f'your bat file {name} is not supported')
+        raise ValueError(f"your bat file '{name}' is not supported")
 
 def available_version_lolminer():
     """return current available version of lolminer from Github
@@ -142,6 +142,11 @@ def stop_miner(process_name):
     string = ''.join([i for i in string if i.isnumeric()])
     os.system(f'taskkill /pid {string} /t /f')
 
+def get_time():
+    x = datetime.datetime.now()
+    current = x.strftime('%D - %H:%M:%S')
+    return current
+
 ################################################################################
 
 diz = read_config()
@@ -155,7 +160,6 @@ active_wait = diz['wait_time_active']
 inactive_wait = diz['wait_time_inactive']
 api = diz['API']
 oracle = diz['gas_oracle']
-
 
 miner = which_miner()
 
@@ -181,11 +185,10 @@ started = False
 gas = get_value(oracle, api)
 if gas > start_gas:
     start_miner()
-    print(f'miner STARTED - gas value: {start_gas}')
-    x = datetime.datetime.now()
-    current = x.strftime('%D - %H:%M:%S')
+    current = get_time()
+    print(f'{current} - miner STARTED with the following gas value: {gas}')
     with open('logs.txt', 'a', encoding = 'utf-8') as w:
-        w.write(f'{current} - miner STARTED - gas value {start_gas}\n')
+        w.write(f'{current} - miner STARTED - gas value {gas}\n')
     started = True
 
 while True:
@@ -195,23 +198,21 @@ while True:
         gas = get_value(oracle, api)
         if gas >= start_gas:
             start_miner()
-            print(f'miner STARTED with the following gas value: {gas}')
-            x = datetime.datetime.now()
-            current = x.strftime('%D - %H:%M:%S')
+            current = get_time()
+            print(f'{current} - miner STARTED with the following gas value: {gas}')
             with open('logs.txt', 'a', encoding = 'utf-8') as w:
                 w.write(f'{current} - miner STARTED - gas value: {gas}\n')
             started = True
         else:
             print(f'found {gas}, expected {start_gas} to start\n')
     else:
-        for j in tqdm(range(active_wait), desc = 'Time to check gas value', ascii = True):
+        for j in tqdm(range(active_wait), desc = 'Waiting to check gas value', ascii = True):
             time.sleep(1)
         gas = get_value(oracle, api)
         if gas <= stop_gas:
             stop_miner(process_name)
-            print(f'MINER STOPPED with the following gas value: {gas}')
-            x = datetime.datetime.now()
-            current = x.strftime('%D - %H:%M:%S')
+            current = get_time()
+            print(f'{current} - MINER STOPPED with the following gas value: {gas}')
             with open('logs.txt', 'a', encoding = 'utf-8') as w:
                 w.write(f'{current} - miner STOPPED - gas value: {gas}\n')
             started = False
