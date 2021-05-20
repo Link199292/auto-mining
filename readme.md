@@ -44,3 +44,7 @@ t-rex:
 ## requirements.txt
 
 list of packages required
+
+## new stuff implemented
+
+Now the script automatically retry connection (100 times) before stopping itself. This may happen if the server is not reachable in the moment you're trying to retrieve gas value's information from the API.
