@@ -1,6 +1,6 @@
 # **auto-miner**
 
-auto-miner is a python script which allows you to automate the process of ETH mining based on the current gas value. This may be useful for those people who live in places with an unfavourable electricity bill and who want to maximize the revenue.
+auto-miner is a python script which allows you to automate the process of ETH mining based on the current gas value. This may be useful for those people who live in places with an unfavourable electricity bill and who want to optimize the revenue.
 
 ## config.txt
 
@@ -45,6 +45,12 @@ t-rex:
 
 list of packages required
 
+## REMINDERS
+
+- You have to **modify the wallet by your self**. To make things clear there's no single line in the code which interact with your wallet (no reading, no modification, ...)
+- Some users suggested that if the miner is closed before a certain amount of time, the risk is that you won't get all the eth you would get if you would have kept the miner on instead. For this reason, a quick fix would be to **avoid "intermittent mining"**: this happens if the "wait_time_active" parameter is too small (e.g. 10 seconds). in fact, if the gas value fluctuates too much, you could face a situation for which the miner starts and stops repeatedly, falling in the situation mentioned above. Practically speaking, I would suggest you to keep a "wait_time_active" parameter high (e.g. 1 hour == 3600 seconds).
+- Remember that this script's purpose is to **optimize your revenue**, taking into account also your GPU stress, not to maximize it.
+ 
 ## new stuff implemented
 
 Now the script automatically retry connection (100 times) before stopping itself. This may happen if the server is not reachable in the moment you're trying to retrieve gas value's information from the API.
