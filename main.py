@@ -11,14 +11,14 @@ from pprint import pprint
 
 def get_value(oracle, api):
     reconnect = True
-    api = api
     url = f'https://api.etherscan.io/api?module=gastracker&action=gasoracle&apikey={api}'
     x = requests.get(url)
     try:
         x = eval(x.text)
     except:
         reconnect = False
-        print('could not retrieve information about gas value')
+        current = get_time()
+        print(f'{current} - could not retrieve information about gas value')
         count = 1
         while count < 101:
             x = requests.get(url)
@@ -26,13 +26,12 @@ def get_value(oracle, api):
                 x = eval(x.text)
                 reconnect = True
             except:
-                current = get_time()
-                print(current)
                 print(f'trying to reconnect: {count}/100 attempts', end = '\r', flush = True)
                 count += 1
                 time.sleep(3)
             if reconnect:
-                print('\nreconnected!')
+                current = get_time()
+                print(f'\n{current} - reconnected!')
                 break
     if not reconnect:
         current = get_time()
